@@ -4,7 +4,15 @@ import kotlin.random.Random
 
 typealias ProgramAttributes = Map<String, String>
 
-class Program<LanguageTag>(seed: Long, attributes: ProgramAttributes) {
+class Program<LanguageTag>(
+    seed: Long,
+    attributes: ProgramAttributes,
+    code: ProgramGlobalScope<LanguageTag>.() -> Unit = {}
+) {
     private val random: Random = Random(seed)
-    val scope = ProgramGlobalScope<LanguageTag>(random, attributes)
+    val scope: ProgramScope<LanguageTag>
+
+    init {
+        scope = ProgramGlobalScope<LanguageTag>(random, attributes).apply(code)
+    }
 }

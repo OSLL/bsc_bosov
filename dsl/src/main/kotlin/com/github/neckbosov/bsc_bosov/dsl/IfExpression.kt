@@ -1,5 +1,6 @@
 package com.github.neckbosov.bsc_bosov.dsl
 
+import com.github.neckbosov.bsc_bosov.dsl.features.GlobalInstructions
 import kotlin.random.Random
 
 class IfExpression<LanguageTag>(
@@ -55,7 +56,23 @@ fun <LanguageTag> ProgramLocalScope<LanguageTag>.addIfExpr(
     this.items.add(ifExpression)
 }
 
+fun <LanguageTag : GlobalInstructions> ProgramGlobalScope<LanguageTag>.addIfExpr(
+    ifCond: ProgramExpression<LanguageTag>,
+    blockInit: ProgramLocalScope<LanguageTag>.() -> Unit
+) {
+    val ifBlock = ProgramLocalScope<LanguageTag>(this.random, this.attributes).apply(blockInit)
+    val ifExpression = IfExpression<LanguageTag>(this.random, this.attributes, ifCond, ifBlock)
+    this.items.add(ifExpression)
+}
+
 fun <LanguageTag> ProgramLocalScope<LanguageTag>.addIfElseExpr(
+    blockInit: IfElseExpression<LanguageTag>.() -> Unit
+) {
+    val ifElseExpr = IfElseExpression<LanguageTag>(this.random, this.attributes).apply(blockInit)
+    this.items.add(ifElseExpr)
+}
+
+fun <LanguageTag : GlobalInstructions> ProgramGlobalScope<LanguageTag>.addIfElseExpr(
     blockInit: IfElseExpression<LanguageTag>.() -> Unit
 ) {
     val ifElseExpr = IfElseExpression<LanguageTag>(this.random, this.attributes).apply(blockInit)
