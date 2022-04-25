@@ -16,10 +16,11 @@ application {
 }
 
 dependencies {
+    implementation(project(":dsl"))
     implementation(project(":tasks"))
     implementation(project(":code-mappers"))
     implementation("io.ktor:ktor-server-core:2.0.0")
-    implementation("io.ktor:ktor-server-netty:2.0.0")
+    implementation("io.ktor:ktor-server-jetty:2.0.0")
     implementation("io.ktor:ktor-server-content-negotiation:2.0.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
     implementation("ch.qos.logback:logback-classic:1.2.11")

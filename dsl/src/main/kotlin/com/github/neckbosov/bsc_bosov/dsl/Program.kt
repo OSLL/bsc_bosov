@@ -2,7 +2,7 @@ package com.github.neckbosov.bsc_bosov.dsl
 
 import kotlin.random.Random
 
-typealias ProgramAttributes = Map<String, String>
+typealias ProgramAttributes = Map<String, List<String>>
 
 class Program<LanguageTag>(
     seed: Long,

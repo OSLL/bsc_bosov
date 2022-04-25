@@ -5,13 +5,15 @@ import com.github.neckbosov.bsc_bosov.dsl.tags.PythonTag
 
 fun task1(seed: Long, attributes: ProgramAttributes) = Program<PythonTag>(seed, attributes) {
     val xVar = Variable<PythonTag>("x")
-    addAssignment(xVar, ConstantExpr(""))
+    val stringLen = getRandomInt(10, 20)
+    val randomString = getRandomString(stringLen)
+    addAssignment(xVar, constantExpr(randomString))
     addIfElseExpr {
-        addIf(VariableExpr(xVar)) {
-            funcCall("print", ConstantExpr("true"))
+        addIf(funcCall("len", VariableExpr(xVar)) opLess constantExpr(15)) {
+            addFuncCall("print", constantExpr("small"))
         }
         addElse {
-            funcCall("print", ConstantExpr("false"))
+            addFuncCall("print", constantExpr("long"))
         }
     }
 }
