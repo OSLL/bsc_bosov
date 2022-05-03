@@ -3,8 +3,10 @@ package com.github.neckbosov.bsc_bosov.dsl.template
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramAttributes
 import com.github.neckbosov.bsc_bosov.dsl.program.StringConstant
 import com.github.neckbosov.bsc_bosov.dsl.program.Variable
+import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
+@Serializable
 sealed class ProgramVariableNameTemplate<LanguageTag> : ProgramStringConstantTemplate<LanguageTag>() {
     companion object {
         val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9') + "_".toCharArray().toList()
@@ -13,6 +15,7 @@ sealed class ProgramVariableNameTemplate<LanguageTag> : ProgramStringConstantTem
     abstract override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag>
 }
 
+@Serializable
 class ConstantProgramVariableNameTemplate<LanguageTag>(val name: String) : ProgramVariableNameTemplate<LanguageTag>() {
     init {
         if (!name.all { it in allowedChars }) {
@@ -28,6 +31,7 @@ class ConstantProgramVariableNameTemplate<LanguageTag>(val name: String) : Progr
     }
 }
 
+@Serializable
 class RandomVariableNameTemplate<LanguageTag>(
     val length: ProgramNumberConstantTemplate<Int, LanguageTag>
 ) : ProgramVariableNameTemplate<LanguageTag>() {
@@ -41,6 +45,7 @@ class RandomVariableNameTemplate<LanguageTag>(
     }
 }
 
+@Serializable
 class AttributeRefVariableNameTemplate<LanguageTag>(val key: String, val ind: Int? = null) :
     ProgramVariableNameTemplate<LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag> {
@@ -56,6 +61,7 @@ class AttributeRefVariableNameTemplate<LanguageTag>(val key: String, val ind: In
 
 }
 
+@Serializable
 class VariableTemplate<LanguageTag>(val name: ProgramVariableNameTemplate<LanguageTag>) :
     ProgramExpressionTemplate<LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): Variable<LanguageTag> {

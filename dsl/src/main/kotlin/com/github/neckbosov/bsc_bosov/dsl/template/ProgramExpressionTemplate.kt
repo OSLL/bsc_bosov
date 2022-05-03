@@ -4,12 +4,16 @@ import com.github.neckbosov.bsc_bosov.dsl.program.BinOpExpr
 import com.github.neckbosov.bsc_bosov.dsl.program.FunctionalCallExpr
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramAttributes
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramExpression
+import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
-sealed class ProgramExpressionTemplate<LanguageTag> : ProgramItemTemplate<LanguageTag>() {
+@Serializable
+sealed class ProgramExpressionTemplate<LanguageTag> : ProgramItemTemplate<LanguageTag> {
     abstract override fun fillItem(random: Random, attributes: ProgramAttributes): ProgramExpression<LanguageTag>
 }
 
+
+@Serializable
 class BinOpExprTemplate<LanguageTag>(
     val op: ProgramStringConstantTemplate<LanguageTag>,
     val lhs: ProgramExpressionTemplate<LanguageTag>,
@@ -39,6 +43,7 @@ fun <LanguageTag> binOp(
 infix fun <LanguageTag> ProgramExpressionTemplate<LanguageTag>.opLt(rhs: ProgramExpressionTemplate<LanguageTag>) =
     binOp("<", this, rhs)
 
+@Serializable
 class FunctionalCallExprTemplate<LanguageTag>(
     val functionName: ProgramVariableNameTemplate<LanguageTag>,
     val params: List<ProgramExpressionTemplate<LanguageTag>>

@@ -4,12 +4,14 @@ import com.github.neckbosov.bsc_bosov.dsl.features.GlobalInstructions
 import com.github.neckbosov.bsc_bosov.dsl.program.IfElseExpression
 import com.github.neckbosov.bsc_bosov.dsl.program.IfExpression
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramAttributes
+import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
+@Serializable
 class IfExpressionTemplate<LanguageTag>(
     val cond: ProgramExpressionTemplate<LanguageTag>,
     val block: ProgramLocalScopeTemplate<LanguageTag>
-) : ProgramInstructionTemplate<LanguageTag>() {
+) : ProgramInstructionTemplate<LanguageTag> {
     override fun fillItem(random: Random, attributes: ProgramAttributes): IfExpression<LanguageTag> {
         return IfExpression(
             cond.fillItem(random, attributes),
@@ -18,10 +20,11 @@ class IfExpressionTemplate<LanguageTag>(
     }
 }
 
+@Serializable
 class IfElseExpressionTemplate<LanguageTag>(
     val cond: ProgramExpressionTemplate<LanguageTag>,
     val block: ProgramLocalScopeTemplate<LanguageTag>
-) : ProgramInstructionTemplate<LanguageTag>() {
+) : ProgramInstructionTemplate<LanguageTag> {
     val elifBlocks = mutableListOf<IfExpressionTemplate<LanguageTag>>()
     var elseBlock: ProgramLocalScopeTemplate<LanguageTag>? = null
     override fun fillItem(random: Random, attributes: ProgramAttributes): IfElseExpression<LanguageTag> {

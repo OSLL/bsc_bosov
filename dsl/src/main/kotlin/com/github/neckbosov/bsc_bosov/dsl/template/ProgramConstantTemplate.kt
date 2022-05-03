@@ -4,41 +4,65 @@ import com.github.neckbosov.bsc_bosov.dsl.program.Constant
 import com.github.neckbosov.bsc_bosov.dsl.program.NumConstant
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramAttributes
 import com.github.neckbosov.bsc_bosov.dsl.program.StringConstant
+import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
-enum class NumConstantType {
+@Serializable
+enum class NumType {
     LONG, INT, FLOAT, DOUBLE
 }
 
-inline fun <reified T : Number> getConstantType(): NumConstantType {
+@Serializable
+sealed class ProgramNum(val kind: NumType)
+
+@Serializable
+class IntProgramNum(val number: Int) : ProgramNum(NumType.INT)
+
+@Serializable
+class LongProgramNum(val number: Long) : ProgramNum(NumType.LONG)
+
+@Serializable
+class FloatProgramNum(val number: Float) : ProgramNum(NumType.FLOAT)
+
+@Serializable
+class DoubleProgramNum(val number: Double) : ProgramNum(NumType.DOUBLE)
+
+inline fun <reified T : Number> getConstantType(): NumType {
     return when (T::class) {
-        Long::class -> NumConstantType.LONG
-        Int::class -> NumConstantType.INT
-        Float::class -> NumConstantType.FLOAT
-        Double::class -> NumConstantType.DOUBLE
+        Long::class -> NumType.LONG
+        Int::class -> NumType.INT
+        Float::class -> NumType.FLOAT
+        Double::class -> NumType.DOUBLE
         else -> error("Unsupported constant type")
     }
 }
 
+@Serializable
 sealed class ProgramConstantTemplate<LanguageTag> : ProgramExpressionTemplate<LanguageTag>() {
     abstract override fun fillItem(random: Random, attributes: ProgramAttributes): Constant<LanguageTag>
 }
 
+@Serializable
 sealed class ProgramNumberConstantTemplate<T : Number, LanguageTag> : ProgramConstantTemplate<LanguageTag>() {
     abstract override fun fillItem(random: Random, attributes: ProgramAttributes): NumConstant<LanguageTag>
 }
 
+@Serializable
 sealed class ProgramStringConstantTemplate<LanguageTag> : ProgramConstantTemplate<LanguageTag>() {
     abstract override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag>
 }
 
+@Serializable
 class StringConstantTemplate<LanguageTag>(val value: String) : ProgramStringConstantTemplate<LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag> {
         return StringConstant(value)
     }
 }
 
-class NumConstantTemplate<T : Number, LanguageTag>(val value: T) : ProgramNumberConstantTemplate<T, LanguageTag>() {
+@Suppress("SERIALIZER_TYPE_INCOMPATIBLE")
+@Serializable
+class NumConstantTemplate<T : Number, LanguageTag>(@Serializable(with = NumConstantSerializer::class) val value: T) :
+    ProgramNumberConstantTemplate<T, LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): NumConstant<LanguageTag> {
         return NumConstant(value)
     }
@@ -52,9 +76,9 @@ fun <LanguageTag, T> ProgramScopeTemplate<LanguageTag>.constant(value: T): Progr
     }
 }
 
-
+@Serializable
 class RandomNumConstantTemplate<T : Number, LanguageTag>(
-    val numType: NumConstantType,
+    val numType: NumType,
     val from: ProgramNumberConstantTemplate<T, LanguageTag>?,
     val until: ProgramNumberConstantTemplate<T, LanguageTag>?
 ) : ProgramNumberConstantTemplate<T, LanguageTag>() {
@@ -62,10 +86,10 @@ class RandomNumConstantTemplate<T : Number, LanguageTag>(
         val fromVal = from?.fillItem(random, attributes)?.value
         val untilVal = until?.fillItem(random, attributes)?.value
         return when (numType) {
-            NumConstantType.LONG -> NumConstant(random.nextLong(fromVal?.toLong(), untilVal?.toLong()))
-            NumConstantType.INT -> NumConstant(random.nextInt(fromVal?.toInt(), untilVal?.toInt()))
-            NumConstantType.FLOAT -> NumConstant(random.nextFloat())
-            NumConstantType.DOUBLE -> NumConstant(random.nextDouble(fromVal?.toDouble(), untilVal?.toDouble()))
+            NumType.LONG -> NumConstant(random.nextLong(fromVal?.toLong(), untilVal?.toLong()))
+            NumType.INT -> NumConstant(random.nextInt(fromVal?.toInt(), untilVal?.toInt()))
+            NumType.FLOAT -> NumConstant(random.nextFloat())
+            NumType.DOUBLE -> NumConstant(random.nextDouble(fromVal?.toDouble(), untilVal?.toDouble()))
         }
     }
 }
@@ -88,6 +112,7 @@ inline fun <reified T : Number, LanguageTag> ProgramScopeTemplate<LanguageTag>.r
 fun <LanguageTag> ProgramScopeTemplate<LanguageTag>.randomFloatConstant(): RandomNumConstantTemplate<Float, LanguageTag> =
     RandomNumConstantTemplate(getConstantType<Float>(), null, null)
 
+@Serializable
 class RandomStringConstantTemplate<LanguageTag>(
     val length: ProgramNumberConstantTemplate<Int, LanguageTag>
 ) :
@@ -108,8 +133,9 @@ fun <LanguageTag> ProgramScopeTemplate<LanguageTag>.randomStringConstant(length:
 fun <LanguageTag> ProgramScopeTemplate<LanguageTag>.randomStringConstant(length: ProgramNumberConstantTemplate<Int, LanguageTag>): RandomStringConstantTemplate<LanguageTag> =
     RandomStringConstantTemplate(length)
 
+@Serializable
 class NumAttributeRefTemplate<T : Number, LanguageTag>(
-    val numType: NumConstantType,
+    val numType: NumType,
     val key: String,
     val ind: ProgramNumberConstantTemplate<Int, LanguageTag>? = null
 ) : ProgramNumberConstantTemplate<T, LanguageTag>() {
@@ -117,10 +143,10 @@ class NumAttributeRefTemplate<T : Number, LanguageTag>(
         val indValue = ind?.fillItem(random, attributes)?.value?.toInt()
         val value = attributes.getValue(key)[indValue ?: 0]
         return when (numType) {
-            NumConstantType.LONG -> NumConstant(value.toLong())
-            NumConstantType.INT -> NumConstant(value.toInt())
-            NumConstantType.FLOAT -> NumConstant(value.toFloat())
-            NumConstantType.DOUBLE -> NumConstant(value.toDouble())
+            NumType.LONG -> NumConstant(value.toLong())
+            NumType.INT -> NumConstant(value.toInt())
+            NumType.FLOAT -> NumConstant(value.toFloat())
+            NumType.DOUBLE -> NumConstant(value.toDouble())
         }
     }
 }
@@ -136,6 +162,7 @@ inline fun <reified T : Number, LanguageTag> ProgramScopeTemplate<LanguageTag>.n
     ind: ProgramNumberConstantTemplate<Int, LanguageTag>? = null
 ): NumAttributeRefTemplate<T, LanguageTag> = NumAttributeRefTemplate(getConstantType<T>(), key, ind)
 
+@Serializable
 class StringAttributeRefTemplate<LanguageTag>(
     val key: String,
     val ind: ProgramNumberConstantTemplate<Int, LanguageTag>? = null
