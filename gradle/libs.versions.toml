@@ -1,0 +1,20 @@
+[versions]
+ktor = "2.0.1"
+kmongo = "4.5.1"
+
+[libraries]
+kmongo-id = { module = "org.litote.kmongo:kmongo-id", version.ref = "kmongo" }
+kmongo-coroutine-serialization = { module = "org.litote.kmongo:kmongo-coroutine-serialization", version.ref = "kmongo" }
+kotlinx-serializaion-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2"
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-jetty = { module = "io.ktor:ktor-server-jetty", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+logback-classic = "ch.qos.logback:logback-classic:1.2.11"
+
+[bundles]
+ktor-server = ["ktor-server-core", "ktor-server-jetty", "ktor-server-content-negotiation", "ktor-serialization-kotlinx-json"]
+ktor-client = ["ktor-client-core", "ktor-client-cio", "ktor-client-content-negotiation", "ktor-serialization-kotlinx-json"]

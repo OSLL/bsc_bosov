@@ -14,7 +14,7 @@ dependencies {
     kotlin("stdlib")
     kotlin("reflect")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation(libs.kotlinx.serializaion.json)
 }
 
 tasks.getByName<Test>("test") {

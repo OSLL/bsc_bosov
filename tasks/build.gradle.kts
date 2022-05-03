@@ -14,7 +14,10 @@ repositories {
 dependencies {
     kotlin("stdlib")
     implementation(project(":dsl"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation(libs.kotlinx.serializaion.json)
+
+
+    implementation(libs.bundles.ktor.client)
 }
 
 tasks.getByName<Test>("test") {
