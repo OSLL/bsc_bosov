@@ -18,12 +18,12 @@ fun main() {
             json()
         }
         routing {
-            get("/get_source/{task}") {
-                val task = call.parameters["task"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            get("/get_source") {
+                val task = call.request.queryParameters["task"] ?: return@get call.respond(HttpStatusCode.BadRequest)
                 val seed =
                     call.request.queryParameters["seed"]?.toLong() ?: return@get call.respond(HttpStatusCode.BadRequest)
                 val attributes = call.request.queryParameters.toMap().minus("seed")
-                val program = task1(seed, attributes)
+                val program = task1().fill(seed, attributes)
                 val code = PythonMapper.generateCode(program)
                 call.respond(HttpStatusCode.OK, code)
             }

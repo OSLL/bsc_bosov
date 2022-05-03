@@ -1,11 +1,11 @@
 package com.github.neckbosov.bsc_bosov.code_mapper
 
-import com.github.neckbosov.bsc_bosov.dsl.*
+import com.github.neckbosov.bsc_bosov.dsl.program.*
 import com.github.neckbosov.bsc_bosov.dsl.tags.PythonTag
 
 object PythonMapper : CodeMapper<PythonTag> {
 
-    private fun generateConstantExprString(c: Constant): String = when (c) {
+    private fun generateConstantExprString(c: Constant<PythonTag>): String = when (c) {
         is NumConstant -> c.value.toString()
         is StringConstant -> "\"${c.value}\""
     }
@@ -13,8 +13,8 @@ object PythonMapper : CodeMapper<PythonTag> {
 
     private fun generateExpressionString(expr: ProgramExpression<PythonTag>): String {
         return when (expr) {
-            is ConstantExpr -> generateConstantExprString(expr.value)
-            is VariableExpr -> expr.variable.name
+            is Constant -> generateConstantExprString(expr)
+            is Variable -> expr.name
             is BinOpExpr -> "${generateExpressionString(expr.lhs)} ${expr.op} ${generateExpressionString(expr.rhs)}"
             is FunctionalCallExpr -> generateFuncCallCode(expr)
         }
@@ -42,9 +42,9 @@ object PythonMapper : CodeMapper<PythonTag> {
     }
 
     private fun generateIfElseExprCode(item: IfElseExpression<PythonTag>): String {
-        val mainBlockString = generateIfExprCode(item.ifBlock)
+        val mainBlockString = generateScopeCode(item.block).prependIndent("    ")
         return buildString {
-            appendLine(mainBlockString.trimEnd())
+            appendLine("if ${generateExpressionString(item.cond)}:\n$mainBlockString".trimEnd())
             for (elifBlock in item.elifBlocks) {
                 val blockString = generateScopeCode(elifBlock.block).prependIndent("    ")
                 appendLine("elif ${generateExpressionString(elifBlock.cond)}:\n$blockString")

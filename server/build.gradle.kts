@@ -1,6 +1,7 @@
 plugins {
     id("java")
     kotlin("jvm")
+    kotlin("plugin.serialization") version "1.6.20"
     application
 }
 
@@ -19,6 +20,12 @@ dependencies {
     implementation(project(":dsl"))
     implementation(project(":tasks"))
     implementation(project(":code-mappers"))
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+
+    implementation("org.litote.kmongo:kmongo-coroutine-serialization:4.5.1")
+    implementation("org.litote.kmongo:kmongo-id:4.5.1")
+
     implementation("io.ktor:ktor-server-core:2.0.0")
     implementation("io.ktor:ktor-server-jetty:2.0.0")
     implementation("io.ktor:ktor-server-content-negotiation:2.0.0")

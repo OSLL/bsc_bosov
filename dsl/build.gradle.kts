@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization") version "1.6.20"
     id("java")
 }
 
@@ -12,6 +13,8 @@ repositories {
 dependencies {
     kotlin("stdlib")
     kotlin("reflect")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 }
 
 tasks.getByName<Test>("test") {
