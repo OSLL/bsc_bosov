@@ -1,6 +1,7 @@
 package com.github.neckbosov.bsc_bosov.server.dao
 
-import com.example.config.ConfigProvider
+import com.github.neckbosov.bsc_bosov.dsl.tags.ProgramLanguageTag
+import com.github.neckbosov.bsc_bosov.server.config.ConfigProvider
 import com.mongodb.ConnectionString
 import io.ktor.http.*
 import org.litote.kmongo.coroutine.CoroutineDatabase
@@ -26,4 +27,6 @@ suspend fun createMongoDB(): MongoDB {
 private suspend fun MongoDB.prepareDatabase() = apply {
     val variantsCollection = getCollection<Variants>()
     variantsCollection.ensureUniqueIndex(Variants::parameters)
+    val templatesCollection = getCollection<Template<out ProgramLanguageTag>>()
+    templatesCollection.ensureUniqueIndex(Template<out ProgramLanguageTag>::taskName)
 }

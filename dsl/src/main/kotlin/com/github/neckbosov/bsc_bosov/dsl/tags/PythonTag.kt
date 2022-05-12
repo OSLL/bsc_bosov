@@ -4,5 +4,5 @@ import com.github.neckbosov.bsc_bosov.dsl.features.GlobalInstructions
 import kotlinx.serialization.Serializable
 
 @Serializable
-object PythonTag : GlobalInstructions {
+object PythonTag : GlobalInstructions, ProgramLanguageTag() {
 }

@@ -2,12 +2,13 @@ package com.github.neckbosov.bsc_bosov.dsl.template
 
 import com.github.neckbosov.bsc_bosov.dsl.program.Program
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramAttributes
+import com.github.neckbosov.bsc_bosov.dsl.tags.ProgramLanguageTag
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
 
 @Serializable
-class ProgramTemplate<LanguageTag>(val scope: ProgramGlobalScopeTemplate<LanguageTag>) {
+class ProgramTemplate<LanguageTag : ProgramLanguageTag>(val scope: ProgramGlobalScopeTemplate<LanguageTag>) {
 
     constructor(code: ProgramGlobalScopeTemplate<LanguageTag>.() -> Unit) : this(
         ProgramGlobalScopeTemplate<LanguageTag>().apply(

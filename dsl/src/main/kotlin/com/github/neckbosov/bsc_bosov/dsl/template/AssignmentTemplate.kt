@@ -2,11 +2,12 @@ package com.github.neckbosov.bsc_bosov.dsl.template
 
 import com.github.neckbosov.bsc_bosov.dsl.program.Assignment
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramAttributes
+import com.github.neckbosov.bsc_bosov.dsl.tags.ProgramLanguageTag
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
 @Serializable
-class AssignmentTemplate<LanguageTag>(
+class AssignmentTemplate<LanguageTag : ProgramLanguageTag>(
     val lhs: VariableTemplate<LanguageTag>,
     val rhs: ProgramExpressionTemplate<LanguageTag>
 ) : ProgramInstructionTemplate<LanguageTag> {
@@ -15,7 +16,7 @@ class AssignmentTemplate<LanguageTag>(
     }
 }
 
-fun <LanguageTag> ProgramScopeTemplate<LanguageTag>.addAssignment(
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.addAssignment(
     lhs: VariableTemplate<LanguageTag>,
     rhs: ProgramExpressionTemplate<LanguageTag>
 ) {

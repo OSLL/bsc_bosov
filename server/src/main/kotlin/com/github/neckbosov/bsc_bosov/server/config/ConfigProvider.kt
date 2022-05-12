@@ -1,10 +1,9 @@
-package com.example.config
+package com.github.neckbosov.bsc_bosov.server.config
 
-import java.io.FileInputStream
 import java.util.*
 
 object ConfigProvider {
-    private val configFile = FileInputStream("resources/config.properties")
+    private val configFile = javaClass.classLoader.getResourceAsStream("config.properties")
     private val appProps = Properties()
 
     init {

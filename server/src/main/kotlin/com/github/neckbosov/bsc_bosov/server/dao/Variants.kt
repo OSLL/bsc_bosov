@@ -24,7 +24,7 @@ data class Variants(
 
 class VariantsOps(private val database: MongoDB) {
     val collection: CoroutineCollection<Variants>
-        get() = database.getCollection()
+        get() = database.getCollection("variants")
 
     suspend fun getImage(parameters: ProgramAttributes) =
         collection.find(Variants::parameters eq parameters).first()?.image?.let {

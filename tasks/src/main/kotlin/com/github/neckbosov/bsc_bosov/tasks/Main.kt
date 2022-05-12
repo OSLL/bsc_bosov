@@ -8,12 +8,12 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 fun main() {
-    val task1Template = task1()
-    val json = Json {
+    val task1Template = task()
+    val taskJson = Json {
         serializersModule = dslModule
     }
-    val s = json.encodeToString(task1Template)
+    val s = taskJson.encodeToString(task1Template)
     println(s)
-    val t = json.decodeFromString<ProgramTemplate<PythonTag>>(s)
+    val t = taskJson.decodeFromString<ProgramTemplate<PythonTag>>(s)
 
 }

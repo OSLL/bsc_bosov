@@ -4,11 +4,12 @@ import com.github.neckbosov.bsc_bosov.dsl.features.GlobalInstructions
 import com.github.neckbosov.bsc_bosov.dsl.program.IfElseExpression
 import com.github.neckbosov.bsc_bosov.dsl.program.IfExpression
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramAttributes
+import com.github.neckbosov.bsc_bosov.dsl.tags.ProgramLanguageTag
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
 @Serializable
-class IfExpressionTemplate<LanguageTag>(
+class IfExpressionTemplate<LanguageTag : ProgramLanguageTag>(
     val cond: ProgramExpressionTemplate<LanguageTag>,
     val block: ProgramLocalScopeTemplate<LanguageTag>
 ) : ProgramInstructionTemplate<LanguageTag> {
@@ -21,7 +22,7 @@ class IfExpressionTemplate<LanguageTag>(
 }
 
 @Serializable
-class IfElseExpressionTemplate<LanguageTag>(
+class IfElseExpressionTemplate<LanguageTag : ProgramLanguageTag>(
     val cond: ProgramExpressionTemplate<LanguageTag>,
     val block: ProgramLocalScopeTemplate<LanguageTag>
 ) : ProgramInstructionTemplate<LanguageTag> {
@@ -38,7 +39,7 @@ class IfElseExpressionTemplate<LanguageTag>(
     }
 }
 
-fun <LanguageTag> IfElseExpressionTemplate<LanguageTag>.addElif(
+fun <LanguageTag : ProgramLanguageTag> IfElseExpressionTemplate<LanguageTag>.addElif(
     cond: ProgramExpressionTemplate<LanguageTag>,
     blockInit: ProgramLocalScopeTemplate<LanguageTag>.() -> Unit
 ): IfElseExpressionTemplate<LanguageTag> {
@@ -48,14 +49,13 @@ fun <LanguageTag> IfElseExpressionTemplate<LanguageTag>.addElif(
     return this
 }
 
-fun <LanguageTag> IfElseExpressionTemplate<LanguageTag>.addElse(
+fun <LanguageTag : ProgramLanguageTag> IfElseExpressionTemplate<LanguageTag>.addElse(
     blockInit: ProgramLocalScopeTemplate<LanguageTag>.() -> Unit
-): IfElseExpressionTemplate<LanguageTag> {
+) {
     this.elseBlock = ProgramLocalScopeTemplate<LanguageTag>().apply(blockInit)
-    return this
 }
 
-fun <LanguageTag> ProgramLocalScopeTemplate<LanguageTag>.addIfExpr(
+fun <LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.addIfExpr(
     cond: ProgramExpressionTemplate<LanguageTag>,
     blockInit: ProgramLocalScopeTemplate<LanguageTag>.() -> Unit
 ) {
@@ -64,7 +64,7 @@ fun <LanguageTag> ProgramLocalScopeTemplate<LanguageTag>.addIfExpr(
     this.items.add(ifExpr)
 }
 
-fun <LanguageTag> ProgramLocalScopeTemplate<LanguageTag>.addIfElseExpr(
+fun <LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.addIfElseExpr(
     cond: ProgramExpressionTemplate<LanguageTag>,
     blockInit: ProgramLocalScopeTemplate<LanguageTag>.() -> Unit
 ): IfElseExpressionTemplate<LanguageTag> {
@@ -74,19 +74,19 @@ fun <LanguageTag> ProgramLocalScopeTemplate<LanguageTag>.addIfElseExpr(
     return ifElseExpr
 }
 
-fun <LanguageTag : GlobalInstructions> ProgramGlobalScopeTemplate<LanguageTag>.addIfExpr(
+fun <LanguageTag> ProgramGlobalScopeTemplate<LanguageTag>.addIfExpr(
     cond: ProgramExpressionTemplate<LanguageTag>,
     blockInit: ProgramLocalScopeTemplate<LanguageTag>.() -> Unit
-) {
+) where LanguageTag : GlobalInstructions, LanguageTag : ProgramLanguageTag {
     val block = ProgramLocalScopeTemplate<LanguageTag>().apply(blockInit)
     val ifExpr = IfExpressionTemplate(cond, block)
     this.items.add(ifExpr)
 }
 
-fun <LanguageTag : GlobalInstructions> ProgramGlobalScopeTemplate<LanguageTag>.addIfElseExpr(
+fun <LanguageTag> ProgramGlobalScopeTemplate<LanguageTag>.addIfElseExpr(
     cond: ProgramExpressionTemplate<LanguageTag>,
     blockInit: ProgramLocalScopeTemplate<LanguageTag>.() -> Unit
-): IfElseExpressionTemplate<LanguageTag> {
+): IfElseExpressionTemplate<LanguageTag> where LanguageTag : GlobalInstructions, LanguageTag : ProgramLanguageTag {
     val block = ProgramLocalScopeTemplate<LanguageTag>().apply(blockInit)
     val ifElseExpr = IfElseExpressionTemplate(cond, block)
     this.items.add(ifElseExpr)

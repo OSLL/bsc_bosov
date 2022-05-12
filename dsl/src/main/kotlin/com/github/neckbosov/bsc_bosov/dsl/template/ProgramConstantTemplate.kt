@@ -4,6 +4,7 @@ import com.github.neckbosov.bsc_bosov.dsl.program.Constant
 import com.github.neckbosov.bsc_bosov.dsl.program.NumConstant
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramAttributes
 import com.github.neckbosov.bsc_bosov.dsl.program.StringConstant
+import com.github.neckbosov.bsc_bosov.dsl.tags.ProgramLanguageTag
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
@@ -38,22 +39,24 @@ inline fun <reified T : Number> getConstantType(): NumType {
 }
 
 @Serializable
-sealed class ProgramConstantTemplate<LanguageTag> : ProgramExpressionTemplate<LanguageTag>() {
+sealed class ProgramConstantTemplate<LanguageTag : ProgramLanguageTag> : ProgramExpressionTemplate<LanguageTag>() {
     abstract override fun fillItem(random: Random, attributes: ProgramAttributes): Constant<LanguageTag>
 }
 
 @Serializable
-sealed class ProgramNumberConstantTemplate<T : Number, LanguageTag> : ProgramConstantTemplate<LanguageTag>() {
+sealed class ProgramNumberConstantTemplate<T : Number, LanguageTag : ProgramLanguageTag> :
+    ProgramConstantTemplate<LanguageTag>() {
     abstract override fun fillItem(random: Random, attributes: ProgramAttributes): NumConstant<LanguageTag>
 }
 
 @Serializable
-sealed class ProgramStringConstantTemplate<LanguageTag> : ProgramConstantTemplate<LanguageTag>() {
+sealed class ProgramStringConstantTemplate<LanguageTag : ProgramLanguageTag> : ProgramConstantTemplate<LanguageTag>() {
     abstract override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag>
 }
 
 @Serializable
-class StringConstantTemplate<LanguageTag>(val value: String) : ProgramStringConstantTemplate<LanguageTag>() {
+class StringConstantTemplate<LanguageTag : ProgramLanguageTag>(val value: String) :
+    ProgramStringConstantTemplate<LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag> {
         return StringConstant(value)
     }
@@ -61,14 +64,15 @@ class StringConstantTemplate<LanguageTag>(val value: String) : ProgramStringCons
 
 @Suppress("SERIALIZER_TYPE_INCOMPATIBLE")
 @Serializable
-class NumConstantTemplate<T : Number, LanguageTag>(@Serializable(with = NumConstantSerializer::class) val value: T) :
+class NumConstantTemplate<T : Number, LanguageTag : ProgramLanguageTag>(@Serializable(with = NumConstantSerializer::class) val value: T) :
     ProgramNumberConstantTemplate<T, LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): NumConstant<LanguageTag> {
         return NumConstant(value)
     }
 }
 
-fun <LanguageTag, T> ProgramScopeTemplate<LanguageTag>.constant(value: T): ProgramConstantTemplate<LanguageTag> {
+@Suppress("unused")
+fun <LanguageTag : ProgramLanguageTag, T> ProgramScopeTemplate<LanguageTag>.constant(value: T): ProgramConstantTemplate<LanguageTag> {
     return when (value) {
         is Number -> NumConstantTemplate(value)
         is String -> StringConstantTemplate(value)
@@ -77,7 +81,7 @@ fun <LanguageTag, T> ProgramScopeTemplate<LanguageTag>.constant(value: T): Progr
 }
 
 @Serializable
-class RandomNumConstantTemplate<T : Number, LanguageTag>(
+class RandomNumConstantTemplate<T : Number, LanguageTag : ProgramLanguageTag>(
     val numType: NumType,
     val from: ProgramNumberConstantTemplate<T, LanguageTag>?,
     val until: ProgramNumberConstantTemplate<T, LanguageTag>?
@@ -94,7 +98,8 @@ class RandomNumConstantTemplate<T : Number, LanguageTag>(
     }
 }
 
-inline fun <reified T : Number, LanguageTag> ProgramScopeTemplate<LanguageTag>.randomNumConstant(
+@Suppress("unused")
+inline fun <reified T : Number, LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.randomNumConstant(
     from: T? = null,
     until: T? = null
 ): RandomNumConstantTemplate<T, LanguageTag> =
@@ -104,16 +109,18 @@ inline fun <reified T : Number, LanguageTag> ProgramScopeTemplate<LanguageTag>.r
         until?.let { NumConstantTemplate(it) })
 
 
-inline fun <reified T : Number, LanguageTag> ProgramScopeTemplate<LanguageTag>.randomNumConstant(
+@Suppress("unused")
+inline fun <reified T : Number, LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.randomNumConstant(
     from: NumConstantTemplate<T, LanguageTag>? = null,
     until: NumConstantTemplate<T, LanguageTag>? = null
 ): RandomNumConstantTemplate<T, LanguageTag> = RandomNumConstantTemplate(getConstantType<T>(), from, until)
 
-fun <LanguageTag> ProgramScopeTemplate<LanguageTag>.randomFloatConstant(): RandomNumConstantTemplate<Float, LanguageTag> =
+@Suppress("unused")
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.randomFloatConstant(): RandomNumConstantTemplate<Float, LanguageTag> =
     RandomNumConstantTemplate(getConstantType<Float>(), null, null)
 
 @Serializable
-class RandomStringConstantTemplate<LanguageTag>(
+class RandomStringConstantTemplate<LanguageTag : ProgramLanguageTag>(
     val length: ProgramNumberConstantTemplate<Int, LanguageTag>
 ) :
     ProgramStringConstantTemplate<LanguageTag>() {
@@ -127,14 +134,16 @@ class RandomStringConstantTemplate<LanguageTag>(
     }
 }
 
-fun <LanguageTag> ProgramScopeTemplate<LanguageTag>.randomStringConstant(length: Int): RandomStringConstantTemplate<LanguageTag> =
+@Suppress("unused")
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.randomStringConstant(length: Int): RandomStringConstantTemplate<LanguageTag> =
     RandomStringConstantTemplate(NumConstantTemplate(length))
 
-fun <LanguageTag> ProgramScopeTemplate<LanguageTag>.randomStringConstant(length: ProgramNumberConstantTemplate<Int, LanguageTag>): RandomStringConstantTemplate<LanguageTag> =
+@Suppress("unused")
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.randomStringConstant(length: ProgramNumberConstantTemplate<Int, LanguageTag>): RandomStringConstantTemplate<LanguageTag> =
     RandomStringConstantTemplate(length)
 
 @Serializable
-class NumAttributeRefTemplate<T : Number, LanguageTag>(
+class NumAttributeRefTemplate<T : Number, LanguageTag : ProgramLanguageTag>(
     val numType: NumType,
     val key: String,
     val ind: ProgramNumberConstantTemplate<Int, LanguageTag>? = null
@@ -151,19 +160,21 @@ class NumAttributeRefTemplate<T : Number, LanguageTag>(
     }
 }
 
-inline fun <reified T : Number, LanguageTag> ProgramScopeTemplate<LanguageTag>.numAttributeRef(
+@Suppress("unused")
+inline fun <reified T : Number, LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.numAttributeRef(
     key: String,
     ind: Int? = null
 ): NumAttributeRefTemplate<T, LanguageTag> =
     NumAttributeRefTemplate(getConstantType<T>(), key, ind?.let { NumConstantTemplate(it) })
 
-inline fun <reified T : Number, LanguageTag> ProgramScopeTemplate<LanguageTag>.numAttributeRef(
+@Suppress("unused")
+inline fun <reified T : Number, LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.numAttributeRef(
     key: String,
     ind: ProgramNumberConstantTemplate<Int, LanguageTag>? = null
 ): NumAttributeRefTemplate<T, LanguageTag> = NumAttributeRefTemplate(getConstantType<T>(), key, ind)
 
 @Serializable
-class StringAttributeRefTemplate<LanguageTag>(
+class StringAttributeRefTemplate<LanguageTag : ProgramLanguageTag>(
     val key: String,
     val ind: ProgramNumberConstantTemplate<Int, LanguageTag>? = null
 ) :
@@ -175,13 +186,15 @@ class StringAttributeRefTemplate<LanguageTag>(
     }
 }
 
-fun <LanguageTag> ProgramScopeTemplate<LanguageTag>.stringAttributeRef(
+@Suppress("unused")
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.stringAttributeRef(
     key: String,
     ind: Int? = null
 ): StringAttributeRefTemplate<LanguageTag> =
     StringAttributeRefTemplate(key, ind?.let { NumConstantTemplate(it) })
 
-fun <LanguageTag> ProgramScopeTemplate<LanguageTag>.stringAttributeRef(
+@Suppress("unused")
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.stringAttributeRef(
     key: String,
     ind: ProgramNumberConstantTemplate<Int, LanguageTag>? = null
 ): StringAttributeRefTemplate<LanguageTag> = StringAttributeRefTemplate(key, ind)

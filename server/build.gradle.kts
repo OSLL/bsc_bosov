@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":dsl"))
     implementation(project(":tasks"))
     implementation(project(":code-mappers"))
+    implementation(project(":common"))
     implementation(libs.kotlinx.serializaion.json)
 
     implementation(libs.kmongo.id)
@@ -27,6 +28,7 @@ dependencies {
 
     implementation(libs.bundles.ktor.server)
     implementation(libs.logback.classic)
+    implementation(libs.kotlinx.html)
 }
 
 tasks.getByName<Test>("test") {
