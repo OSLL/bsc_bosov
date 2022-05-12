@@ -11,7 +11,7 @@ object ConfigProvider {
     }
 
     val dbName: String by lazy { appProps.getProperty("db.name") }
-    val dbHost: String by lazy { appProps.getProperty("db.host") }
+    val dbHost: String by lazy { System.getenv("MONGO_HOST") ?: appProps.getProperty("db.host") }
     val dbPort: Int by lazy { appProps.getProperty("db.port").toInt() }
     val dbUser: String? by lazy { appProps.getProperty("db.user") }
     val dbPassword: String? by lazy { appProps.getProperty("db.password") }

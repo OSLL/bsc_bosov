@@ -1,4 +1,4 @@
-package com.github.neckbosov.bsc_bosov.tasks
+package com.github.neckbosov.bsc_bosov.task_manager
 
 import com.github.neckbosov.bsc_bosov.dsl.tags.ProgramLanguageTag
 import com.github.neckbosov.bsc_bosov.dsl.tags.PythonTag

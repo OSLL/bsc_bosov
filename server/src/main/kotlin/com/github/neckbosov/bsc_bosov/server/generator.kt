@@ -12,7 +12,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 private val programRunMutex = Mutex()
-private val programRunDirectory = System.getProperty("user.dir")
+private val generationDir = (System.getenv("GENERATION_DIR") + "/") ?: "./generation_data/"
 
 suspend fun generateProgramData(
     tag: ProgramLanguageTag,
@@ -29,35 +29,33 @@ suspend fun generateProgramData(
             filename = "program.py"
             formatCommand = arrayOf("autopep8", "-i")
             compileCommand = null
-            runCommand = arrayOf("python3", "program.py", ">", "output.txt")
+            runCommand = arrayOf("python3", generationDir + "program.py", ">", generationDir + "output.txt")
         }
         else -> error("This program language is not supported yet")
     }
-    val imageFile = "program.png"
+    val codeFilePath = generationDir + filename
+    val imageFile = generationDir + "program.png"
     val imageCommand = arrayOf("pygmentize", "-f", "img", "-o", imageFile)
     val result = programRunMutex.withLock {
         val formattedCode = withContext(Dispatchers.IO) {
-            File(filename).bufferedWriter().use {
+            File(codeFilePath).bufferedWriter().use {
                 it.write(code)
             }
-            val success = ProcessBuilder(*formatCommand, filename)
-                .directory(File(programRunDirectory))
+            val success = ProcessBuilder(*formatCommand, codeFilePath)
                 .start()
                 .waitFor(10, TimeUnit.SECONDS)
-            File(filename).bufferedReader().use {
+            File(codeFilePath).bufferedReader().use {
                 it.readText()
             }
         }
         val image = withContext(Dispatchers.IO) {
-            val success = ProcessBuilder(*imageCommand, filename)
-                .directory(File(programRunDirectory))
+            val success = ProcessBuilder(*imageCommand, codeFilePath)
                 .start()
                 .waitFor(10, TimeUnit.SECONDS)
             File(imageFile).readBytes()
         }
         val answer = withContext(Dispatchers.IO) {
             val proc = ProcessBuilder(*runCommand)
-                .directory(File(programRunDirectory))
                 .redirectOutput(ProcessBuilder.Redirect.PIPE)
                 .redirectError(ProcessBuilder.Redirect.PIPE)
                 .start()

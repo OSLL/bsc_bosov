@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+  server:
+    build: .
+    restart: always
+    ports:
+      - "8100:8080"
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_HOST: mongodb
+  mongodb:
+    image: mongo:5.0.8
+    restart: always
+    volumes:
+      - ../code-generator-db:/data/db
