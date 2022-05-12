@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     kotlin("stdlib")
+    implementation(project(":common"))
     implementation(project(":dsl"))
     implementation(libs.kotlinx.serializaion.json)
 

@@ -54,3 +54,5 @@ class VariantsOps(private val database: MongoDB) {
         collection.find(Variants::parameters eq parameters).first()?.answer
 }
 
+val MongoDB.variants
+    get() = VariantsOps(this)

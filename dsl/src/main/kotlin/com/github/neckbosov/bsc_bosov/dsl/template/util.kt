@@ -1,5 +1,6 @@
 package com.github.neckbosov.bsc_bosov.dsl.template
 
+import com.github.neckbosov.bsc_bosov.dsl.tags.ProgramLanguageTag
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.PairSerializer
@@ -56,30 +57,31 @@ fun Random.nextDouble(from: Double?, until: Double?): Double = if (from == null)
 
 val dslModule = SerializersModule {
     polymorphic(ProgramInstructionTemplate::class) {
-        subclass(ProgramGlobalScopeTemplate.serializer(PolymorphicSerializer(Any::class)))
-        subclass(ProgramLocalScopeTemplate.serializer(PolymorphicSerializer(Any::class)))
-        subclass(FunctionalCallTemplate.serializer(PolymorphicSerializer(Any::class)))
-        subclass(IfElseExpressionTemplate.serializer(PolymorphicSerializer(Any::class)))
-        subclass(IfExpressionTemplate.serializer(PolymorphicSerializer(Any::class)))
-        subclass(AssignmentTemplate.serializer(PolymorphicSerializer(Any::class)))
+        subclass(ProgramGlobalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(ProgramLocalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(FunctionalCallTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(IfElseExpressionTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(IfExpressionTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(AssignmentTemplate.serializer(ProgramLanguageTag.serializer()))
     }
     polymorphic(ProgramExpressionTemplate::class) {
-        subclass(StringConstantTemplate.serializer(PolymorphicSerializer(Any::class)))
-        subclass(NumConstantTemplate.serializer(PolymorphicSerializer(Any::class), PolymorphicSerializer(Any::class)))
-        subclass(RandomStringConstantTemplate.serializer(PolymorphicSerializer(Any::class)))
+        subclass(StringConstantTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(NumConstantTemplate.serializer(PolymorphicSerializer(Any::class), ProgramLanguageTag.serializer()))
+        subclass(RandomStringConstantTemplate.serializer(ProgramLanguageTag.serializer()))
         subclass(
             RandomNumConstantTemplate.serializer(
                 PolymorphicSerializer(Any::class),
-                PolymorphicSerializer(Any::class)
+                ProgramLanguageTag.serializer()
             )
         )
-        subclass(StringAttributeRefTemplate.serializer(PolymorphicSerializer(Any::class)))
+        subclass(StringAttributeRefTemplate.serializer(ProgramLanguageTag.serializer()))
         subclass(
             NumAttributeRefTemplate.serializer(
                 PolymorphicSerializer(Any::class),
-                PolymorphicSerializer(Any::class)
+                ProgramLanguageTag.serializer()
             )
         )
+        subclass(VariableTemplate.serializer(ProgramLanguageTag.serializer()))
     }
 //    polymorphic(Number::class) {
 //        subclass(Int.serializer())

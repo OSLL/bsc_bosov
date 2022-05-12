@@ -58,3 +58,6 @@ class TemplateOps(private val database: MongoDB) {
 
     suspend fun getAllTaskNames() = collection.find().toList().map { it.taskName }
 }
+
+val MongoDB.templates
+    get() = TemplateOps(this)

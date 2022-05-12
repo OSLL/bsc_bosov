@@ -1,16 +1,14 @@
 package com.github.neckbosov.bsc_bosov.server
 
-import com.github.neckbosov.bsc_bosov.code_mapper.PythonMapper
+import com.github.neckbosov.bsc_bosov.code_mapper.getMapper
 import com.github.neckbosov.bsc_bosov.common.DeletedTask
 import com.github.neckbosov.bsc_bosov.common.Task
 import com.github.neckbosov.bsc_bosov.dsl.program.Program
 import com.github.neckbosov.bsc_bosov.dsl.tags.ProgramLanguageTag
-import com.github.neckbosov.bsc_bosov.dsl.tags.PythonTag
 import com.github.neckbosov.bsc_bosov.dsl.template.dslModule
 import com.github.neckbosov.bsc_bosov.server.dao.TemplateOps
 import com.github.neckbosov.bsc_bosov.server.dao.VariantsOps
 import com.github.neckbosov.bsc_bosov.server.dao.createMongoDB
-import com.github.neckbosov.bsc_bosov.tasks.task
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -25,6 +23,8 @@ import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
 import kotlinx.serialization.json.Json
+import org.litote.kmongo.serialization.registerModule
+import org.litote.kmongo.serialization.registerSerializer
 
 private val mongoDB by lazy {
     runBlocking {
@@ -37,6 +37,8 @@ private inline fun <reified LanguageTag : ProgramLanguageTag> castProgram(progra
     program as Program<LanguageTag>
 
 fun main() {
+    registerModule(dslModule)
+    registerSerializer(com.github.neckbosov.bsc_bosov.server.dao.Template.serializer(ProgramLanguageTag.serializer()))
     val variantsDB = VariantsOps(mongoDB)
     val templatesDB = TemplateOps(mongoDB)
     embeddedServer(Jetty, port = 8080) {
@@ -49,14 +51,14 @@ fun main() {
                 val seed =
                     call.request.queryParameters["seed"]?.toLong() ?: return@get call.respond(HttpStatusCode.BadRequest)
                 val attributes = call.request.queryParameters.toMap()
-
-                val program = task().fill(seed, attributes)
-                val code = PythonMapper.generateCode(castProgram(program))
                 var source = variantsDB.getText(attributes)
                 var status = HttpStatusCode.OK
                 if (source == null) {
-                    //TODO:Change tag
-                    val programData = generateProgramData(PythonTag, attributes, code, variantsDB)
+                    val (template, tag) = templatesDB.getTemplateAndTag(task)
+                        ?: return@get call.respond(HttpStatusCode.NotFound, "Task is not found")
+                    val program = template.fill(seed, attributes)
+                    val code = getMapper(tag).generateCode(castProgram(program))
+                    val programData = generateProgramData(tag, attributes, code, variantsDB)
                     source = programData.codeText
                     status = HttpStatusCode.Created
                 }
@@ -69,13 +71,14 @@ fun main() {
                     call.request.queryParameters["seed"]?.toLong() ?: return@get call.respond(HttpStatusCode.BadRequest)
                 val attributes = call.request.queryParameters.toMap()
 
-                val program = task().fill(seed, attributes)
-                val code = PythonMapper.generateCode(castProgram(program))
                 var source = variantsDB.getImage(attributes)
                 var status = HttpStatusCode.OK
                 if (source == null) {
-                    //TODO:Change tag
-                    val programData = generateProgramData(PythonTag, attributes, code, variantsDB)
+                    val (template, tag) = templatesDB.getTemplateAndTag(task)
+                        ?: return@get call.respond(HttpStatusCode.NotFound, "Task is not found")
+                    val program = template.fill(seed, attributes)
+                    val code = getMapper(tag).generateCode(castProgram(program))
+                    val programData = generateProgramData(tag, attributes, code, variantsDB)
                     source = programData.image
                     status = HttpStatusCode.Created
                 }
