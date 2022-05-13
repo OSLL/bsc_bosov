@@ -9,6 +9,7 @@ import com.github.neckbosov.bsc_bosov.dsl.template.dslModule
 import com.github.neckbosov.bsc_bosov.server.dao.TemplateOps
 import com.github.neckbosov.bsc_bosov.server.dao.VariantsOps
 import com.github.neckbosov.bsc_bosov.server.dao.createMongoDB
+import com.github.neckbosov.bsc_bosov.server.dao.variants
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -124,7 +125,12 @@ fun main() {
                 call.respond(HttpStatusCode.OK)
             }
             get("/check_answer") {
-
+                val studentAnswer = call.receive<String>()
+                val attributes = call.request.queryParameters.toMap()
+                val realAnswer =
+                    mongoDB.variants.getAnswer(attributes) ?: return@get call.respond(HttpStatusCode.NotFound)
+                val percent = checkAnswer(studentAnswer, realAnswer)
+                call.respond(HttpStatusCode.OK, percent)
             }
         }
     }.start(wait = true)
