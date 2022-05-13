@@ -123,6 +123,9 @@ fun main() {
                 templatesDB.deleteTemplate(deletedTask.taskName)
                 call.respond(HttpStatusCode.OK)
             }
+            get("/check_answer") {
+
+            }
         }
     }.start(wait = true)
 }
