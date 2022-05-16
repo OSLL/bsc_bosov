@@ -6,7 +6,7 @@ import com.github.neckbosov.bsc_bosov.dsl.tags.PythonTag
 object PythonMapper : CodeMapper<PythonTag> {
 
     private fun generateConstantExprString(c: Constant<PythonTag>): String = when (c) {
-        is NumConstant -> c.value.toString()
+        is NumConstant<*, PythonTag> -> c.value.toString()
         is StringConstant -> "\"${c.value}\""
     }
 

@@ -63,6 +63,22 @@ val dslModule = SerializersModule {
         subclass(IfElseExpressionTemplate.serializer(ProgramLanguageTag.serializer()))
         subclass(IfExpressionTemplate.serializer(ProgramLanguageTag.serializer()))
         subclass(AssignmentTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(RepeatGlobalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(RepeatLocalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(
+            ForeachNumRepeatGlobalScopeTemplate.serializer(
+                PolymorphicSerializer(Any::class),
+                ProgramLanguageTag.serializer()
+            )
+        )
+        subclass(
+            ForeachNumRepeatLocalScopeTemplate.serializer(
+                PolymorphicSerializer(Any::class),
+                ProgramLanguageTag.serializer()
+            )
+        )
+        subclass(ForeachStringRepeatGlobalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(ForeachStringRepeatLocalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
     }
     polymorphic(ProgramExpressionTemplate::class) {
         subclass(StringConstantTemplate.serializer(ProgramLanguageTag.serializer()))
@@ -83,12 +99,6 @@ val dslModule = SerializersModule {
         )
         subclass(VariableTemplate.serializer(ProgramLanguageTag.serializer()))
     }
-//    polymorphic(Number::class) {
-//        subclass(Int.serializer())
-//        subclass(Double.serializer())
-//        subclass(Long.serializer())
-//        subclass(Float.serializer())
-//    }
 }
 
 class NumConstantSerializer : KSerializer<Number> {
