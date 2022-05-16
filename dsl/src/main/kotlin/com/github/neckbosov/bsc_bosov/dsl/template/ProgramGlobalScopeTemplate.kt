@@ -15,3 +15,4 @@ class ProgramGlobalScopeTemplate<LanguageTag : ProgramLanguageTag> : ProgramScop
     }
 
 }
+

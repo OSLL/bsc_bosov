@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.6.20"
+    kotlin("plugin.serialization") version "1.6.21"
     id("java")
 }
 
@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     kotlin("stdlib")
-    kotlin("reflect")
+    implementation(libs.kotlin.reflect)
 
     implementation(libs.kotlinx.serializaion.json)
 }

@@ -10,6 +10,15 @@ object PythonMapper : CodeMapper<PythonTag> {
         is StringConstant -> "\"${c.value}\""
     }
 
+    private fun generateNumListString(expr: NumConstantList<*, PythonTag>): String {
+        val itemsString = expr.numbers.joinToString(separator = ", ") { generateConstantExprString(NumConstant(it)) }
+        return "list($itemsString)"
+    }
+
+    private fun generateStringListString(expr: StringConstantList<PythonTag>): String {
+        val itemsString = expr.strings.joinToString(separator = ", ") { generateConstantExprString(StringConstant(it)) }
+        return "list($itemsString)"
+    }
 
     private fun generateExpressionString(expr: ProgramExpression<PythonTag>): String {
         return when (expr) {
@@ -17,6 +26,8 @@ object PythonMapper : CodeMapper<PythonTag> {
             is Variable -> expr.name
             is BinOpExpr -> "${generateExpressionString(expr.lhs)} ${expr.op} ${generateExpressionString(expr.rhs)}"
             is FunctionalCallExpr -> generateFuncCallCode(expr)
+            is NumConstantList<*, PythonTag> -> generateNumListString(expr)
+            is StringConstantList -> generateStringListString(expr)
         }
     }
 

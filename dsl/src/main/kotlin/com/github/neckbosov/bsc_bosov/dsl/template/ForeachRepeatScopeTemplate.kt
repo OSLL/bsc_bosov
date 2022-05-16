@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 @Serializable
 class ForeachNumRepeatGlobalScopeTemplate<T, LanguageTag>(
-    val items: List<ProgramNumberConstantTemplate<T, LanguageTag>>,
+    val items: ProgramNumberConstantListTemplate<T, LanguageTag>,
     val currentItem: WrappedMutableNumConstant<T, LanguageTag>,
     val scope: ProgramGlobalScopeTemplate<LanguageTag>
 ) : ProgramInstructionTemplate<LanguageTag>
@@ -19,9 +19,9 @@ class ForeachNumRepeatGlobalScopeTemplate<T, LanguageTag>(
               LanguageTag : ProgramLanguageTag {
     override fun fillItem(random: Random, attributes: ProgramAttributes): ProgramGlobalScope<LanguageTag> {
         val programScope = ProgramGlobalScope<LanguageTag>()
-        for (item in items) {
-            val itemValue = item.fillItem(random, attributes).value
-            currentItem.constant = NumConstantTemplate(itemValue)
+        val filledItems = items.fillItem(random, attributes).numbers
+        for (item in filledItems) {
+            currentItem.constant = NumConstantTemplate(item)
             val stepScope = scope.fillItem(random, attributes)
             programScope.items.addAll(stepScope.items)
         }
@@ -29,28 +29,21 @@ class ForeachNumRepeatGlobalScopeTemplate<T, LanguageTag>(
     }
 }
 
-@JvmName("foreachRepeatNumberConstantItemsGlobal")
+
 fun <T : Number, LanguageTag : ProgramLanguageTag> ProgramGlobalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: List<ProgramNumberConstantTemplate<T, LanguageTag>>,
+    foreachItems: ProgramNumberConstantListTemplate<T, LanguageTag>,
     scopeInit: ProgramGlobalScopeTemplate<LanguageTag>.(ProgramNumberConstantTemplate<T, LanguageTag>) -> Unit
 ) {
-    if (foreachItems.isEmpty()) return
-    val currentItem = WrappedMutableNumConstant(foreachItems.first())
+    val currentItem = WrappedMutableNumConstant<T, LanguageTag>(null)
     val scope = ProgramGlobalScopeTemplate<LanguageTag>().apply {
         scopeInit(currentItem)
     }
     this.items.add(ForeachNumRepeatGlobalScopeTemplate(foreachItems, currentItem, scope))
 }
 
-@JvmName("foreachRepeatPureNumberItemsGlobal")
-fun <T : Number, LanguageTag : ProgramLanguageTag> ProgramGlobalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: List<T>,
-    scopeInit: ProgramGlobalScopeTemplate<LanguageTag>.(ProgramNumberConstantTemplate<T, LanguageTag>) -> Unit
-): Unit = this.foreachRepeat(foreachItems.map { NumConstantTemplate(it) }, scopeInit)
-
 @Serializable
 class ForeachNumRepeatLocalScopeTemplate<T, LanguageTag>(
-    val items: List<ProgramNumberConstantTemplate<T, LanguageTag>>,
+    val items: ProgramNumberConstantListTemplate<T, LanguageTag>,
     val currentItem: WrappedMutableNumConstant<T, LanguageTag>,
     val scope: ProgramLocalScopeTemplate<LanguageTag>
 ) : ProgramInstructionTemplate<LanguageTag>
@@ -58,9 +51,9 @@ class ForeachNumRepeatLocalScopeTemplate<T, LanguageTag>(
               LanguageTag : ProgramLanguageTag {
     override fun fillItem(random: Random, attributes: ProgramAttributes): ProgramLocalScope<LanguageTag> {
         val programScope = ProgramLocalScope<LanguageTag>()
-        for (item in items) {
-            val itemValue = item.fillItem(random, attributes).value
-            currentItem.constant = NumConstantTemplate(itemValue)
+        val filledItems = items.fillItem(random, attributes).numbers
+        for (item in filledItems) {
+            currentItem.constant = NumConstantTemplate(item)
             val stepScope = scope.fillItem(random, attributes)
             programScope.items.addAll(stepScope.items)
         }
@@ -68,37 +61,29 @@ class ForeachNumRepeatLocalScopeTemplate<T, LanguageTag>(
     }
 }
 
-@JvmName("foreachRepeatNumberConstantItemsLocal")
 fun <T : Number, LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: List<ProgramNumberConstantTemplate<T, LanguageTag>>,
+    foreachItems: ProgramNumberConstantListTemplate<T, LanguageTag>,
     scopeInit: ProgramLocalScopeTemplate<LanguageTag>.(ProgramNumberConstantTemplate<T, LanguageTag>) -> Unit
 ) {
-    if (foreachItems.isEmpty()) return
-    val currentItem = WrappedMutableNumConstant(foreachItems.first())
+    val currentItem = WrappedMutableNumConstant<T, LanguageTag>(null)
     val scope = ProgramLocalScopeTemplate<LanguageTag>().apply {
         scopeInit(currentItem)
     }
     this.items.add(ForeachNumRepeatLocalScopeTemplate(foreachItems, currentItem, scope))
 }
 
-@JvmName("foreachRepeatPureNumberItemsLocal")
-fun <T : Number, LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: List<T>,
-    scopeInit: ProgramLocalScopeTemplate<LanguageTag>.(ProgramNumberConstantTemplate<T, LanguageTag>) -> Unit
-): Unit = this.foreachRepeat(foreachItems.map { NumConstantTemplate(it) }, scopeInit)
-
 @Serializable
 class ForeachStringRepeatGlobalScopeTemplate<LanguageTag>(
-    val items: List<ProgramStringConstantTemplate<LanguageTag>>,
+    val items: ProgramStringConstantListTemplate<LanguageTag>,
     val currentItem: WrappedMutableStringConstant<LanguageTag>,
     val scope: ProgramGlobalScopeTemplate<LanguageTag>
 ) : ProgramInstructionTemplate<LanguageTag>
         where LanguageTag : ProgramLanguageTag {
     override fun fillItem(random: Random, attributes: ProgramAttributes): ProgramGlobalScope<LanguageTag> {
         val programScope = ProgramGlobalScope<LanguageTag>()
-        for (item in items) {
-            val itemValue = item.fillItem(random, attributes).value
-            currentItem.constant = StringConstantTemplate(itemValue)
+        val filledItems = items.fillItem(random, attributes).strings
+        for (item in filledItems) {
+            currentItem.constant = StringConstantTemplate(item)
             val stepScope = scope.fillItem(random, attributes)
             programScope.items.addAll(stepScope.items)
         }
@@ -106,37 +91,30 @@ class ForeachStringRepeatGlobalScopeTemplate<LanguageTag>(
     }
 }
 
-@JvmName("foreachRepeatStringConstantItemsGlobal")
 fun <LanguageTag : ProgramLanguageTag> ProgramGlobalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: List<ProgramStringConstantTemplate<LanguageTag>>,
+    foreachItems: ProgramStringConstantListTemplate<LanguageTag>,
     scopeInit: ProgramGlobalScopeTemplate<LanguageTag>.(ProgramStringConstantTemplate<LanguageTag>) -> Unit
 ) {
-    if (foreachItems.isEmpty()) return
-    val currentItem = WrappedMutableStringConstant(foreachItems.first())
+    val currentItem = WrappedMutableStringConstant<LanguageTag>(null)
     val scope = ProgramGlobalScopeTemplate<LanguageTag>().apply {
         scopeInit(currentItem)
     }
     this.items.add(ForeachStringRepeatGlobalScopeTemplate(foreachItems, currentItem, scope))
 }
 
-@JvmName("foreachRepeatPureStringItemsGlobal")
-fun <LanguageTag : ProgramLanguageTag> ProgramGlobalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: List<String>,
-    scopeInit: ProgramGlobalScopeTemplate<LanguageTag>.(ProgramStringConstantTemplate<LanguageTag>) -> Unit
-): Unit = this.foreachRepeat(foreachItems.map { StringConstantTemplate(it) }, scopeInit)
 
 @Serializable
 class ForeachStringRepeatLocalScopeTemplate<LanguageTag>(
-    val items: List<ProgramStringConstantTemplate<LanguageTag>>,
+    val items: ProgramStringConstantListTemplate<LanguageTag>,
     val currentItem: WrappedMutableStringConstant<LanguageTag>,
     val scope: ProgramLocalScopeTemplate<LanguageTag>
 ) : ProgramInstructionTemplate<LanguageTag>
         where LanguageTag : ProgramLanguageTag {
     override fun fillItem(random: Random, attributes: ProgramAttributes): ProgramLocalScope<LanguageTag> {
         val programScope = ProgramLocalScope<LanguageTag>()
-        for (item in items) {
-            val itemValue = item.fillItem(random, attributes).value
-            currentItem.constant = StringConstantTemplate(itemValue)
+        val filledItems = items.fillItem(random, attributes).strings
+        for (item in filledItems) {
+            currentItem.constant = StringConstantTemplate(item)
             val stepScope = scope.fillItem(random, attributes)
             programScope.items.addAll(stepScope.items)
         }
@@ -144,21 +122,13 @@ class ForeachStringRepeatLocalScopeTemplate<LanguageTag>(
     }
 }
 
-@JvmName("foreachRepeatStringConstantItemsLocal")
 fun <LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: List<ProgramStringConstantTemplate<LanguageTag>>,
+    foreachItems: ProgramStringConstantListTemplate<LanguageTag>,
     scopeInit: ProgramLocalScopeTemplate<LanguageTag>.(ProgramStringConstantTemplate<LanguageTag>) -> Unit
 ) {
-    if (foreachItems.isEmpty()) return
-    val currentItem = WrappedMutableStringConstant(foreachItems.first())
+    val currentItem = WrappedMutableStringConstant<LanguageTag>(null)
     val scope = ProgramLocalScopeTemplate<LanguageTag>().apply {
         scopeInit(currentItem)
     }
     this.items.add(ForeachStringRepeatLocalScopeTemplate(foreachItems, currentItem, scope))
 }
-
-@JvmName("foreachRepeatPureStringItemsLocal")
-fun <LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: List<String>,
-    scopeInit: ProgramLocalScopeTemplate<LanguageTag>.(ProgramStringConstantTemplate<LanguageTag>) -> Unit
-): Unit = this.foreachRepeat(foreachItems.map { StringConstantTemplate(it) }, scopeInit)

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.github.neckbosov.bsc_bosov.dsl.template
 
 import com.github.neckbosov.bsc_bosov.dsl.program.Constant
@@ -129,7 +131,7 @@ class RandomStringConstantTemplate<LanguageTag : ProgramLanguageTag>(
 ) :
     ProgramStringConstantTemplate<LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag> {
-        val lengthValue = length.fillItem(random, attributes).value.toInt()
+        val lengthValue = length.fillItem(random, attributes).value
         val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9') + ",.[]<>/?()*&^%_- ".toCharArray().toList()
         return (1..lengthValue)
             .map { allowedChars.random(random) }
@@ -194,20 +196,20 @@ class StringAttributeRefTemplate<LanguageTag : ProgramLanguageTag>(
 
 @Serializable
 class WrappedMutableStringConstant<LanguageTag : ProgramLanguageTag>(
-    var constant: ProgramStringConstantTemplate<LanguageTag>
+    var constant: ProgramStringConstantTemplate<LanguageTag>?
 ) : ProgramStringConstantTemplate<LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag> {
-        return constant.fillItem(random, attributes)
+        return constant!!.fillItem(random, attributes)
     }
 
 }
 
 @Serializable
 class WrappedMutableNumConstant<T : Number, LanguageTag : ProgramLanguageTag>(
-    var constant: ProgramNumberConstantTemplate<T, LanguageTag>
+    var constant: ProgramNumberConstantTemplate<T, LanguageTag>?
 ) : ProgramNumberConstantTemplate<T, LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): NumConstant<T, LanguageTag> {
-        return constant.fillItem(random, attributes)
+        return constant!!.fillItem(random, attributes)
     }
 
 }
@@ -224,3 +226,33 @@ fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.stringA
     key: String,
     ind: ProgramNumberConstantTemplate<Int, LanguageTag>? = null
 ): StringAttributeRefTemplate<LanguageTag> = StringAttributeRefTemplate(key, ind)
+
+@Serializable
+class RandomChoiceNumConstant<T : Number, LanguageTag : ProgramLanguageTag>(
+    val items: ProgramNumberConstantListTemplate<T, LanguageTag>
+) : ProgramNumberConstantTemplate<T, LanguageTag>() {
+    override fun fillItem(random: Random, attributes: ProgramAttributes): NumConstant<T, LanguageTag> {
+        val itemValues = items.fillItem(random, attributes)
+        val item = itemValues.numbers.random(random)
+        return NumConstant(item)
+    }
+}
+
+fun <T : Number, LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.randomChoiceNum(
+    items: ProgramNumberConstantListTemplate<T, LanguageTag>
+): RandomChoiceNumConstant<T, LanguageTag> = RandomChoiceNumConstant(items)
+
+@Serializable
+class RandomChoiceStringConstant<LanguageTag : ProgramLanguageTag>(
+    val items: ProgramStringConstantListTemplate<LanguageTag>
+) : ProgramStringConstantTemplate<LanguageTag>() {
+    override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag> {
+        val itemValues = items.fillItem(random, attributes)
+        val item = itemValues.strings.random(random)
+        return StringConstant(item)
+    }
+}
+
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.randomChoiceString(
+    items: ProgramStringConstantListTemplate<LanguageTag>
+): RandomChoiceStringConstant<LanguageTag> = RandomChoiceStringConstant(items)
