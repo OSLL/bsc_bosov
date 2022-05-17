@@ -45,6 +45,8 @@ object PythonMapper : CodeMapper<PythonTag> {
                         is FunctionalCall<PythonTag> -> generateFuncCallCode(item.functionalCallExpr)
                         is IfExpression<PythonTag> -> generateIfExprCode(item)
                         is IfElseExpression<PythonTag> -> generateIfElseExprCode(item)
+                        is FunctionalDefinition<PythonTag> -> generateFuncDefCode(item)
+                        is VariableDefinition<PythonTag> -> generateVarDefCode(item)
                         else -> error("Instruction not supported yet")
                     }
                 )
@@ -80,5 +82,45 @@ object PythonMapper : CodeMapper<PythonTag> {
     private fun generateFuncCallCode(functionalCall: FunctionalCallExpr<PythonTag>): String {
         val paramsString = functionalCall.params.joinToString(separator = ", ") { generateExpressionString(it) }
         return "${functionalCall.functionName}($paramsString)"
+    }
+
+    private fun generateFunctionalArgumentCode(argument: FunctionalArgument<PythonTag>): String {
+        return buildString {
+            append(argument.variable.name)
+            if (argument.typeName != null) {
+                append(":${argument.typeName}")
+            }
+            val initValue = argument.initialValue
+            if (initValue != null) {
+                val exprString = generateExpressionString(initValue)
+                append(" = $exprString")
+            }
+        }
+    }
+
+    private fun generateFuncDefCode(functionalDefinition: FunctionalDefinition<PythonTag>): String {
+        val blockString = generateScopeCode(functionalDefinition.scope).prependIndent("    ")
+        val argumentsString = functionalDefinition.arguments.joinToString(separator = ", ") {
+            generateFunctionalArgumentCode(it)
+        }
+        return "def ${functionalDefinition.name}($argumentsString):\n$blockString\n"
+    }
+
+    private fun generateVarDefCode(variableDefinition: VariableDefinition<PythonTag>): String {
+        val typeName = variableDefinition.typeName
+        val initValue = variableDefinition.initialValue
+        if (typeName == null && initValue == null) {
+            error("Incorrect variable definition in python")
+        }
+        return buildString {
+            append(variableDefinition.variable.name)
+            if (typeName != null) {
+                append(": $typeName")
+            }
+            if (initValue != null) {
+                val exprString = generateExpressionString(initValue)
+                append(" = $exprString")
+            }
+        }
     }
 }

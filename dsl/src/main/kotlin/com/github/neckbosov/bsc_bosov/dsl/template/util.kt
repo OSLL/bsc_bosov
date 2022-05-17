@@ -59,6 +59,7 @@ val dslModule = SerializersModule {
     polymorphic(ProgramInstructionTemplate::class) {
         subclass(ProgramGlobalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
         subclass(ProgramLocalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(ProgramFunctionalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
         subclass(FunctionalCallTemplate.serializer(ProgramLanguageTag.serializer()))
         subclass(IfElseExpressionTemplate.serializer(ProgramLanguageTag.serializer()))
         subclass(IfExpressionTemplate.serializer(ProgramLanguageTag.serializer()))
@@ -79,6 +80,8 @@ val dslModule = SerializersModule {
         )
         subclass(ForeachStringRepeatGlobalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
         subclass(ForeachStringRepeatLocalScopeTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(VariableDefinitionTemplate.serializer(ProgramLanguageTag.serializer()))
+        subclass(FunctionalDefinitionTemplate.serializer(ProgramLanguageTag.serializer()))
     }
     polymorphic(ProgramExpressionTemplate::class) {
         subclass(StringConstantTemplate.serializer(ProgramLanguageTag.serializer()))

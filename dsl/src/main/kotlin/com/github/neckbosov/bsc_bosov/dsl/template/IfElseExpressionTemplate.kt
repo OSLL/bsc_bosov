@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.github.neckbosov.bsc_bosov.dsl.template
 
 import com.github.neckbosov.bsc_bosov.dsl.features.GlobalInstructions
