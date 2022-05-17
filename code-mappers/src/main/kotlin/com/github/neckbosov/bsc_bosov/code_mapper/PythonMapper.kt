@@ -103,7 +103,14 @@ object PythonMapper : CodeMapper<PythonTag> {
         val argumentsString = functionalDefinition.arguments.joinToString(separator = ", ") {
             generateFunctionalArgumentCode(it)
         }
-        return "def ${functionalDefinition.name}($argumentsString):\n$blockString\n"
+        return buildString {
+            append("def ${functionalDefinition.name}($argumentsString):")
+            if (functionalDefinition.returnTypeName != null) {
+                append(" -> ${functionalDefinition.returnTypeName}")
+            }
+            appendLine()
+            appendLine(blockString)
+        }
     }
 
     private fun generateVarDefCode(variableDefinition: VariableDefinition<PythonTag>): String {

@@ -24,8 +24,8 @@ class VariableDefinitionTemplate<LanguageTag : ProgramLanguageTag>(
 
 fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.varDef(
     variable: VariableTemplate<LanguageTag>,
-    typeName: String? = null,
-    initialValue: ProgramExpressionTemplate<LanguageTag>?
+    typeName: String,
+    initialValue: ProgramExpressionTemplate<LanguageTag>? = null
 ) {
     val definition = VariableDefinitionTemplate(variable, typeName, initialValue)
     this.items.add(definition)
@@ -33,13 +33,30 @@ fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.varDef(
 
 fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.varDef(
     variableName: ProgramVariableNameTemplate<LanguageTag>,
-    typeName: String? = null,
+    typeName: String,
     initialValue: ProgramExpressionTemplate<LanguageTag>?
 ) = this.varDef(VariableTemplate(variableName), typeName, initialValue)
 
 fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.varDef(
     variableName: String,
-    typeName: String? = null,
+    typeName: String,
     initialValue: ProgramExpressionTemplate<LanguageTag>?
 ) = this.varDef(variable(variableName), typeName, initialValue)
 
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.varDef(
+    variable: VariableTemplate<LanguageTag>,
+    initialValue: ProgramExpressionTemplate<LanguageTag>
+) {
+    val definition = VariableDefinitionTemplate(variable, null, initialValue)
+    this.items.add(definition)
+}
+
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.varDef(
+    variableName: ProgramVariableNameTemplate<LanguageTag>,
+    initialValue: ProgramExpressionTemplate<LanguageTag>
+) = this.varDef(VariableTemplate(variableName), initialValue)
+
+fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.varDef(
+    variableName: String,
+    initialValue: ProgramExpressionTemplate<LanguageTag>
+) = this.varDef(variable(variableName), initialValue)
