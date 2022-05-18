@@ -9,7 +9,7 @@ fun task(): ProgramTemplate<out ProgramLanguageTag> = ProgramTemplate<PythonTag>
     val stringLen = randomNumConstant(10, 20)
     val randomString = randomStringConstant(stringLen)
     addAssignment(xVar, randomString)
-    addIfElseExpr(funcCall("len", xVar) opLt constant(15)) {
+    addIfElseInstr(funcCall("len", xVar) opLt constant(15)) {
         addFuncCall("print", constant("small"))
     }.addElse {
         addFuncCall("print", constant("long"))

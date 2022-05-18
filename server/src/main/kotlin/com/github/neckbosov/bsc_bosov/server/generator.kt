@@ -12,7 +12,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 private val programRunMutex = Mutex()
-private val generationDir = (System.getenv("GENERATION_DIR") + "/") ?: "./generation_data/"
+private val generationDir = (System.getenv("GENERATION_DIR")?.plus("/")) ?: "./generation_data/"
 
 suspend fun generateProgramData(
     tag: ProgramLanguageTag,
@@ -53,6 +53,14 @@ suspend fun generateProgramData(
                 .start()
                 .waitFor(10, TimeUnit.SECONDS)
             File(imageFile).readBytes()
+        }
+        @Suppress("SENSELESS_COMPARISON")
+        if (compileCommand != null) {
+            withContext(Dispatchers.IO) {
+                val success = ProcessBuilder(*compileCommand, codeFilePath)
+                    .start()
+                    .waitFor(10, TimeUnit.SECONDS)
+            }
         }
         val answer = withContext(Dispatchers.IO) {
             val proc = ProcessBuilder(*runCommand)

@@ -124,11 +124,11 @@ fun main() {
                 templatesDB.deleteTemplate(deletedTask.taskName)
                 call.respond(HttpStatusCode.OK)
             }
-            get("/check_answer") {
+            post("/check_answer") {
                 val studentAnswer = call.receive<String>()
                 val attributes = call.request.queryParameters.toMap()
                 val realAnswer =
-                    mongoDB.variants.getAnswer(attributes) ?: return@get call.respond(HttpStatusCode.NotFound)
+                    mongoDB.variants.getAnswer(attributes) ?: return@post call.respond(HttpStatusCode.NotFound)
                 val percent = checkAnswer(studentAnswer, realAnswer)
                 call.respond(HttpStatusCode.OK, percent)
             }

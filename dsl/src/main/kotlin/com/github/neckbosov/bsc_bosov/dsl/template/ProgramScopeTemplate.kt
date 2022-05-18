@@ -35,3 +35,9 @@ open class ProgramGlobalScopeTemplate<LanguageTag : ProgramLanguageTag> : Progra
 
 @Serializable
 open class ProgramFunctionalScopeTemplate<LanguageTag : ProgramLanguageTag> : ProgramLocalScopeTemplate<LanguageTag>()
+
+//@Serializable
+//open class ProgramMethodScopeTemplate<LanguageTag : ProgramLanguageTag> : ProgramFunctionalScopeTemplate<LanguageTag>()
+//
+//@Serializable
+//open class ProgramClassScopeTemplate<LanguageTag : ProgramLanguageTag> : ProgramGlobalScopeTemplate<LanguageTag>()

@@ -43,10 +43,11 @@ object PythonMapper : CodeMapper<PythonTag> {
                     when (item) {
                         is Assignment<PythonTag> -> generateAssignmentCode(item)
                         is FunctionalCall<PythonTag> -> generateFuncCallCode(item.functionalCallExpr)
-                        is IfExpression<PythonTag> -> generateIfExprCode(item)
-                        is IfElseExpression<PythonTag> -> generateIfElseExprCode(item)
+                        is IfInstruction<PythonTag> -> generateIfExprCode(item)
+                        is IfElseInstruction<PythonTag> -> generateIfElseExprCode(item)
                         is FunctionalDefinition<PythonTag> -> generateFuncDefCode(item)
                         is VariableDefinition<PythonTag> -> generateVarDefCode(item)
+                        is WhileInstruction<PythonTag> -> generateWhileCode(item)
                         else -> error("Instruction not supported yet")
                     }
                 )
@@ -54,7 +55,7 @@ object PythonMapper : CodeMapper<PythonTag> {
         }
     }
 
-    private fun generateIfElseExprCode(item: IfElseExpression<PythonTag>): String {
+    private fun generateIfElseExprCode(item: IfElseInstruction<PythonTag>): String {
         val mainBlockString = generateScopeCode(item.block).prependIndent("    ")
         return buildString {
             appendLine("if ${generateExpressionString(item.cond)}:\n$mainBlockString".trimEnd())
@@ -74,7 +75,7 @@ object PythonMapper : CodeMapper<PythonTag> {
         return generateScopeCode(program.scope) + "\n"
     }
 
-    private fun generateIfExprCode(item: IfExpression<PythonTag>): String {
+    private fun generateIfExprCode(item: IfInstruction<PythonTag>): String {
         val blockString = generateScopeCode(item.block).prependIndent("    ")
         return "if ${generateExpressionString(item.cond)}:\n$blockString"
     }
@@ -129,5 +130,11 @@ object PythonMapper : CodeMapper<PythonTag> {
                 append(" = $exprString")
             }
         }
+    }
+
+    private fun generateWhileCode(whileInstruction: WhileInstruction<PythonTag>): String {
+        val condString = generateExpressionString(whileInstruction.cond)
+        val scopeString = generateScopeCode(whileInstruction.scope).prependIndent("    ")
+        return "while($condString):\n$scopeString\n"
     }
 }
