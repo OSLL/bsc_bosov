@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.6.20"
+    kotlin("plugin.serialization")
     id("java")
 }
 

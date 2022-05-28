@@ -35,7 +35,7 @@ class RepeatLocalScopeTemplate<LanguageTag>(
 ) : ProgramInstructionTemplate<LanguageTag>
         where LanguageTag : ProgramLanguageTag {
     override fun fillItem(random: Random, attributes: ProgramAttributes): ProgramLocalScope<LanguageTag> {
-        val timesValue = times.fillItem(random, attributes).value.toInt()
+        val timesValue = times.fillItem(random, attributes).value
         val programScope = ProgramLocalScope<LanguageTag>()
         for (i in 0 until timesValue) {
             counter.constant = NumConstantTemplate(i)
@@ -46,34 +46,3 @@ class RepeatLocalScopeTemplate<LanguageTag>(
     }
 }
 
-fun <LanguageTag : ProgramLanguageTag> ProgramGlobalScopeTemplate<LanguageTag>.repeatScope(
-    times: ProgramNumberConstantTemplate<Int, LanguageTag>,
-    scopeInit: ProgramGlobalScopeTemplate<LanguageTag>.(ProgramNumberConstantTemplate<Int, LanguageTag>) -> Unit
-) {
-    val counter = WrappedMutableNumConstant<Int, LanguageTag>(NumConstantTemplate(0))
-    val scope = ProgramGlobalScopeTemplate<LanguageTag>().apply {
-        scopeInit(counter)
-    }
-    this.items.add(RepeatGlobalScopeTemplate(times, counter, scope))
-}
-
-fun <LanguageTag : ProgramLanguageTag> ProgramGlobalScopeTemplate<LanguageTag>.repeatScope(
-    times: Int,
-    scopeInit: ProgramGlobalScopeTemplate<LanguageTag>.(ProgramNumberConstantTemplate<Int, LanguageTag>) -> Unit
-) = this.repeatScope(NumConstantTemplate(times), scopeInit)
-
-fun <LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.repeatScope(
-    times: ProgramNumberConstantTemplate<Int, LanguageTag>,
-    scopeInit: ProgramLocalScopeTemplate<LanguageTag>.(ProgramNumberConstantTemplate<Int, LanguageTag>) -> Unit
-) {
-    val counter = WrappedMutableNumConstant<Int, LanguageTag>(NumConstantTemplate(0))
-    val scope = ProgramLocalScopeTemplate<LanguageTag>().apply {
-        scopeInit(counter)
-    }
-    this.items.add(RepeatLocalScopeTemplate(times, counter, scope))
-}
-
-fun <LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.repeatScope(
-    times: Int,
-    scopeInit: ProgramLocalScopeTemplate<LanguageTag>.(ProgramNumberConstantTemplate<Int, LanguageTag>) -> Unit
-) = this.repeatScope(NumConstantTemplate(times), scopeInit)

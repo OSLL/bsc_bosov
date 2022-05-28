@@ -15,10 +15,3 @@ class AssignmentTemplate<LanguageTag : ProgramLanguageTag>(
         return Assignment(lhs.fillItem(random, attributes), rhs.fillItem(random, attributes))
     }
 }
-
-fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.addAssignment(
-    lhs: VariableTemplate<LanguageTag>,
-    rhs: ProgramExpressionTemplate<LanguageTag>
-) {
-    this.items.add(AssignmentTemplate(lhs, rhs))
-}

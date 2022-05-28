@@ -12,12 +12,12 @@ object PythonMapper : CodeMapper<PythonTag> {
 
     private fun generateNumListString(expr: NumConstantList<*, PythonTag>): String {
         val itemsString = expr.numbers.joinToString(separator = ", ") { generateConstantExprString(NumConstant(it)) }
-        return "list($itemsString)"
+        return "[$itemsString]"
     }
 
     private fun generateStringListString(expr: StringConstantList<PythonTag>): String {
         val itemsString = expr.strings.joinToString(separator = ", ") { generateConstantExprString(StringConstant(it)) }
-        return "list($itemsString)"
+        return "[$itemsString]"
     }
 
     private fun generateExpressionString(expr: ProgramExpression<PythonTag>): String {

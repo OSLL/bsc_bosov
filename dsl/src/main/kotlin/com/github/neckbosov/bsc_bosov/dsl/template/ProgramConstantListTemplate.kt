@@ -47,27 +47,7 @@ class NumConstantListTemplate<T : Number, LanguageTag : ProgramLanguageTag>(
     }
 }
 
-inline fun <LanguageTag : ProgramLanguageTag, reified T> ProgramScopeTemplate<LanguageTag>.constantList(vararg values: T): ProgramConstantListTemplate<LanguageTag> {
-    return when (values.first()) {
-        is Number -> NumConstantListTemplate(values.map {
-            it as Number
-            NumConstantTemplate(it)
-        })
-        is String -> StringConstantListTemplate(values.map {
-            it as String
-            StringConstantTemplate(it)
-        })
-        else -> error("Not supported constant type")
-    }
-}
 
-fun <LanguageTag : ProgramLanguageTag, T : Number> ProgramScopeTemplate<LanguageTag>.constantList(vararg values: ProgramNumberConstantTemplate<T, LanguageTag>): ProgramConstantListTemplate<LanguageTag> {
-    return NumConstantListTemplate(values.toList())
-}
-
-fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.constantList(vararg values: ProgramStringConstantTemplate<LanguageTag>): ProgramConstantListTemplate<LanguageTag> {
-    return StringConstantListTemplate(values.toList())
-}
 
 @Suppress("UNCHECKED_CAST")
 @Serializable
@@ -88,10 +68,6 @@ class NumAttributeRefListTemplate<T : Number, LanguageTag : ProgramLanguageTag>(
     }
 }
 
-inline fun <reified T : Number, LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.numAttributeRefList(
-    key: String
-): NumAttributeRefListTemplate<T, LanguageTag> = NumAttributeRefListTemplate(getConstantType<T>(), key)
-
 @Serializable
 class StringAttributeRefListTemplate<LanguageTag : ProgramLanguageTag>(
     val key: String
@@ -103,6 +79,3 @@ class StringAttributeRefListTemplate<LanguageTag : ProgramLanguageTag>(
     }
 }
 
-fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.stringAttributeRefList(
-    key: String
-): StringAttributeRefListTemplate<LanguageTag> = StringAttributeRefListTemplate(key)

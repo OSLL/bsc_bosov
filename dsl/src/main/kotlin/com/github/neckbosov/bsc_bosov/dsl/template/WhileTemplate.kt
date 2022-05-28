@@ -20,10 +20,3 @@ class WhileInstructionTemplate<LanguageTag : ProgramLanguageTag>(
     }
 }
 
-fun <LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.addWhile(
-    cond: ProgramExpressionTemplate<LanguageTag>,
-    scopeInit: ProgramLocalScopeTemplate<LanguageTag>.() -> Unit
-) {
-    val scope = ProgramLocalScopeTemplate<LanguageTag>().apply(scopeInit)
-    this.items.add(WhileInstructionTemplate(cond, scope))
-}

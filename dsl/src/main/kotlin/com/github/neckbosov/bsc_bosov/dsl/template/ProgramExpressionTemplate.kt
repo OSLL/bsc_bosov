@@ -29,21 +29,6 @@ class BinOpExprTemplate<LanguageTag : ProgramLanguageTag>(
     }
 }
 
-fun <LanguageTag : ProgramLanguageTag> binOp(
-    op: String,
-    lhs: ProgramExpressionTemplate<LanguageTag>,
-    rhs: ProgramExpressionTemplate<LanguageTag>
-): BinOpExprTemplate<LanguageTag> = BinOpExprTemplate(StringConstantTemplate(op), lhs, rhs)
-
-fun <LanguageTag : ProgramLanguageTag> binOp(
-    op: ProgramStringConstantTemplate<LanguageTag>,
-    lhs: ProgramExpressionTemplate<LanguageTag>,
-    rhs: ProgramExpressionTemplate<LanguageTag>
-): BinOpExprTemplate<LanguageTag> = BinOpExprTemplate(op, lhs, rhs)
-
-infix fun <LanguageTag : ProgramLanguageTag> ProgramExpressionTemplate<LanguageTag>.opLt(rhs: ProgramExpressionTemplate<LanguageTag>) =
-    binOp("<", this, rhs)
-
 @Serializable
 class FunctionalCallExprTemplate<LanguageTag : ProgramLanguageTag>(
     val functionName: ProgramVariableNameTemplate<LanguageTag>,
@@ -56,22 +41,4 @@ class FunctionalCallExprTemplate<LanguageTag : ProgramLanguageTag>(
         )
     }
 }
-
-@Suppress("unused")
-fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.funcCall(
-    functionName: String,
-    vararg params: ProgramExpressionTemplate<LanguageTag>
-) = FunctionalCallExprTemplate(
-    ConstantProgramVariableNameTemplate(functionName),
-    params.toList()
-)
-
-@Suppress("unused")
-fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.funcCall(
-    functionName: ProgramVariableNameTemplate<LanguageTag>,
-    vararg params: ProgramExpressionTemplate<LanguageTag>
-) = FunctionalCallExprTemplate(
-    functionName,
-    params.toList()
-)
 

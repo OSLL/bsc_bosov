@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.github.neckbosov.bsc_bosov.dsl.template
 
 import com.github.neckbosov.bsc_bosov.dsl.program.ProgramAttributes
@@ -39,7 +41,7 @@ class RandomVariableNameTemplate<LanguageTag : ProgramLanguageTag>(
     val length: ProgramNumberConstantTemplate<Int, LanguageTag>
 ) : ProgramVariableNameTemplate<LanguageTag>() {
     override fun fillItem(random: Random, attributes: ProgramAttributes): StringConstant<LanguageTag> {
-        val lengthValue = length.fillItem(random, attributes).value.toInt()
+        val lengthValue = length.fillItem(random, attributes).value
         val beginAllowed = allowedChars - ('0'..'9')
         return (2..lengthValue)
             .map { allowedChars.random(random) }
@@ -73,10 +75,3 @@ class VariableTemplate<LanguageTag : ProgramLanguageTag>(val name: ProgramVariab
     }
 }
 
-@Suppress("unused")
-fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.variable(name: String): VariableTemplate<LanguageTag> =
-    VariableTemplate(ConstantProgramVariableNameTemplate(name))
-
-@Suppress("unused")
-fun <LanguageTag : ProgramLanguageTag> ProgramScopeTemplate<LanguageTag>.variable(varName: ProgramVariableNameTemplate<LanguageTag>) =
-    VariableTemplate(varName)

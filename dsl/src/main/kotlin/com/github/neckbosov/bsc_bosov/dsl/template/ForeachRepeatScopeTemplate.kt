@@ -61,16 +61,6 @@ class ForeachNumRepeatLocalScopeTemplate<T, LanguageTag>(
     }
 }
 
-fun <T : Number, LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: ProgramNumberConstantListTemplate<T, LanguageTag>,
-    scopeInit: ProgramLocalScopeTemplate<LanguageTag>.(ProgramNumberConstantTemplate<T, LanguageTag>) -> Unit
-) {
-    val currentItem = WrappedMutableNumConstant<T, LanguageTag>(null)
-    val scope = ProgramLocalScopeTemplate<LanguageTag>().apply {
-        scopeInit(currentItem)
-    }
-    this.items.add(ForeachNumRepeatLocalScopeTemplate(foreachItems, currentItem, scope))
-}
 
 @Serializable
 class ForeachStringRepeatGlobalScopeTemplate<LanguageTag>(
@@ -89,17 +79,6 @@ class ForeachStringRepeatGlobalScopeTemplate<LanguageTag>(
         }
         return programScope
     }
-}
-
-fun <LanguageTag : ProgramLanguageTag> ProgramGlobalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: ProgramStringConstantListTemplate<LanguageTag>,
-    scopeInit: ProgramGlobalScopeTemplate<LanguageTag>.(ProgramStringConstantTemplate<LanguageTag>) -> Unit
-) {
-    val currentItem = WrappedMutableStringConstant<LanguageTag>(null)
-    val scope = ProgramGlobalScopeTemplate<LanguageTag>().apply {
-        scopeInit(currentItem)
-    }
-    this.items.add(ForeachStringRepeatGlobalScopeTemplate(foreachItems, currentItem, scope))
 }
 
 
@@ -122,13 +101,3 @@ class ForeachStringRepeatLocalScopeTemplate<LanguageTag>(
     }
 }
 
-fun <LanguageTag : ProgramLanguageTag> ProgramLocalScopeTemplate<LanguageTag>.foreachRepeat(
-    foreachItems: ProgramStringConstantListTemplate<LanguageTag>,
-    scopeInit: ProgramLocalScopeTemplate<LanguageTag>.(ProgramStringConstantTemplate<LanguageTag>) -> Unit
-) {
-    val currentItem = WrappedMutableStringConstant<LanguageTag>(null)
-    val scope = ProgramLocalScopeTemplate<LanguageTag>().apply {
-        scopeInit(currentItem)
-    }
-    this.items.add(ForeachStringRepeatLocalScopeTemplate(foreachItems, currentItem, scope))
-}
