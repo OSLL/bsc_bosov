@@ -1,0 +1,14 @@
+{
+  "python": {
+    "extension": "py",
+    "formatCmd": "autopep8 -i $PROGRAM_PATH",
+    "compileCmd": null,
+    "runCmd": "python3 $PROGRAM_PATH"
+  },
+  "cpp": {
+    "extension": "cpp",
+    "formatCmd": "clang-format -i $PROGRAM_PATH",
+    "compileCmd": "g++ -std=c++20 -o $EXE_PATH $PROGRAM_PATH",
+    "runCmd": "$EXE_PATH"
+  }
+}

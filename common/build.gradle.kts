@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
 
-    implementation(project(":dsl"))
+    implementation(project(":ir"))
     implementation(libs.kotlinx.serializaion.json)
 }
 

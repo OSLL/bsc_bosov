@@ -1,5 +1,5 @@
 rootProject.name = "bsc_bosov"
-include("dsl")
+include("ir")
 include("server")
 include("server")
 include("task-manager")

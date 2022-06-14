@@ -16,6 +16,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.html.*
 import io.ktor.server.jetty.*
+import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -46,6 +47,7 @@ fun main() {
         install(ContentNegotiation) {
             json(Json { serializersModule = dslModule })
         }
+        install(CallLogging)
         routing {
             get("/get_source") {
                 val task = call.request.queryParameters["task"] ?: return@get call.respond(HttpStatusCode.BadRequest)
@@ -63,7 +65,9 @@ fun main() {
                     source = programData.codeText
                     status = HttpStatusCode.Created
                 }
-                call.respond(status, source)
+                call.respondText(status = status) {
+                    source!!
+                }
             }
 
             get("/get_image_bytes_png") {
@@ -130,7 +134,7 @@ fun main() {
                 val realAnswer =
                     mongoDB.variants.getAnswer(attributes) ?: return@post call.respond(HttpStatusCode.NotFound)
                 val percent = checkAnswer(studentAnswer, realAnswer)
-                call.respond(HttpStatusCode.OK, percent)
+                call.respond(HttpStatusCode.OK, percent.toString())
             }
         }
     }.start(wait = true)

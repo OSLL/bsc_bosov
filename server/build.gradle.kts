@@ -17,7 +17,7 @@ application {
 }
 
 dependencies {
-    implementation(project(":dsl"))
+    implementation(project(":ir"))
     implementation(project(":code-mappers"))
     implementation(project(":common"))
     implementation(libs.kotlinx.serializaion.json)

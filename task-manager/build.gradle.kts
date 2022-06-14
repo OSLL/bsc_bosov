@@ -18,7 +18,7 @@ application {
 dependencies {
     kotlin("stdlib")
     implementation(project(":common"))
-    implementation(project(":dsl"))
+    implementation(project(":ir"))
     implementation(libs.kotlinx.serializaion.json)
     implementation(libs.kotlinx.cli)
     implementation(libs.bundles.ktor.client)

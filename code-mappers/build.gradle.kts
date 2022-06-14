@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":dsl"))
+    implementation(project(":ir"))
 }
 
 tasks.getByName<Test>("test") {

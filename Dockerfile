@@ -7,7 +7,7 @@ FROM openjdk:11
 EXPOSE 8080
 RUN mkdir "/app"
 RUN apt-get update
-RUN apt -y install python3-pygments python3-autopep8 python3-pillow
+RUN apt -y install python3-pygments python3-autopep8 python3-pillow clang-format gcc g++
 COPY --from=build /home/gradle/src /app/
 RUN mkdir -p /app/generation_data
 ENV GENERATION_DIR="/app/generation_data"

@@ -2,7 +2,7 @@ package com.github.neckbosov.bsc_bosov.task_manager
 
 import com.github.neckbosov.bsc_bosov.common.DeletedTask
 import com.github.neckbosov.bsc_bosov.common.Task
-import com.github.neckbosov.bsc_bosov.dsl.tags.PythonTag
+import com.github.neckbosov.bsc_bosov.dsl.tags.CppTag
 import com.github.neckbosov.bsc_bosov.dsl.template.dslModule
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -23,9 +23,12 @@ fun main(args: Array<String>) {
         .default("0.0.0.0")
     val port by parser.option(ArgType.Int, fullName = "port", description = "Port of code generator").default(8080)
     parser.parse(args)
-    val tasks = listOf(Task("StringLen", PythonTag, task()))
-    val deletedTasks = listOf<String>()
-    val dslJson = Json { serializersModule = dslModule }
+    val tasks = listOf(Task("StringLenCpp", CppTag, task()))
+    val deletedTasks = listOf<String>("StringLenCpp")
+    val dslJson = Json {
+        serializersModule = dslModule
+        prettyPrint = true
+    }
     println(dslJson.encodeToString(tasks))
     val client = HttpClient {
         install(ContentNegotiation) {
@@ -48,7 +51,9 @@ fun main(args: Array<String>) {
                 }
                 "delete" -> {
                     for (task in deletedTasks) {
+                        println("task")
                         it.request {
+                            contentType(ContentType.Application.Json)
                             method = HttpMethod.Delete
                             val deletedTask = DeletedTask(task)
                             url("http://$host:$port/delete_task")
